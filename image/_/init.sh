@@ -4,27 +4,28 @@ set -Eeuo pipefail
 source=/source
 target=/target
 
-function main(){
-	readarray -td: excludes <<<"${EXCLUDE:-}:"; unset 'excludes[-1]';
-	local exclude_arguments=()
+function main() {
+	readarray -td: excludes <<<"${EXCLUDE:-}:"
+	unset 'excludes[-1]'
+	local arguments=()
 	for pattern in "${excludes[@]}"; do
-		exclude_arguments+=( --exclude="$pattern" )
+		arguments+=(--exclude="$pattern")
 	done
 	rsync --recursive --times --verbose --delete \
-		  "${exclude_arguments[@]}" \
-		  --exclude='.sync-backup/' \
-		  --backup --backup-dir="$2/.sync-backup" --suffix=~$(date +%F-%T | sed 's/:/-/g') \
+		"${arguments[@]}" \
+		--exclude='.sync-backup/' \
+		--backup --backup-dir="$2/.sync-backup" --suffix=~$(date +%F-%T | sed 's/:/-/g') \
 		"$1/" "$2/" 2>&1
 }
 
-function is_samba_path(){
-    if [[ "$1" == //* ]]; then
-        return 0
-    fi
-    return 1
+function is_samba_path() {
+	if [[ "$1" == //* ]]; then
+		return 0
+	fi
+	return 1
 }
 
-function mount_samba(){
+function mount_samba() {
 	if [ ! -f "$1" ]; then
 		echo "Credentials file not found: $1"
 		exit 1
@@ -35,11 +36,11 @@ function mount_samba(){
 	fi
 }
 
-function cleanup(){
-	while pkill -0 rsync; do 
+function cleanup() {
+	while pkill -0 rsync; do
 		sleep 1
 	done
-	while pkill -0 mount; do 
+	while pkill -0 mount; do
 		sleep 1
 	done
 }
