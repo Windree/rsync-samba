@@ -1,12 +1,11 @@
 #!/bin/env bash
-set -Eeuxfo pipefail
+set -Eeuo pipefail
 
 source=/source
 target=/target
 
 function main(){
-	echo "'$EXCLUDE'"
-	readarray -td: excludes <<<"${EXCLUDE}:"; unset 'excludes[-1]'; declare -p excludes;
+	readarray -td: excludes <<<"${EXCLUDE:-}:"; unset 'excludes[-1]';
 	local exclude_arguments=()
 	for pattern in "${excludes[@]}"; do
 		exclude_arguments+=( --exclude="$pattern" )

@@ -26,7 +26,6 @@ while [ $# -gt 0 ]; do
     shift
     [ $# -gt 0 ] && shift
   else
-    echo "> $1"
     if [ -z ${source} ]; then
       source=$1
     elif [ -z ${target} ]; then
@@ -104,8 +103,6 @@ function validate() {
     exit 1
   fi
 }
-
-echo "'$source_credentials' '$target_credentials' '$source' '$target'"
 
 validate
 main
