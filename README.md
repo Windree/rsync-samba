@@ -6,16 +6,19 @@
 
 ## Usage
 ```
-./app.sh [OPTIONS]
+./app.sh [OPTIONS] source target
 ```
 ### Options
-**-s, --source** (required) source samba UNC/director. i.e. //server/share, /var/log
+**source** (required) source samba UNC/director. i.e. //server/share, /var/log
+
+**target** (required) target samba UNC/director. i.e. //server/share, /var/log
 
 **-sc, --source-credentials** (required if source is samba share) source samba credentials file
 
-**-t, --target** (required) target samba UNC/director. i.e. //server/share, /var/log
-
 **-tc, --target-credentials** (required if target is samba share) target samba credentials file
+
+**-e, --exclude** exclude locations from backup. Separate multipile values with :
+
 
 ### Samba credentials file example
 ```

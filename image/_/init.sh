@@ -1,14 +1,19 @@
 #!/bin/env bash
-set -Eeuo pipefail
+set -Eeuxfo pipefail
 
 source=/source
 target=/target
 
 function main(){
+	echo "'$EXCLUDE'"
+	readarray -td: excludes <<<"${EXCLUDE}:"; unset 'excludes[-1]'; declare -p excludes;
+	local exclude_arguments=()
+	for pattern in "${excludes[@]}"; do
+		exclude_arguments+=( --exclude="$pattern" )
+	done
 	rsync --recursive --times --verbose --delete \
-		  --exclude '$RECYCLE.BIN/' \
-		  --exclude 'System Volume Information/' \
-		  --exclude '.sync-backup/' \
+		  "${exclude_arguments[@]}" \
+		  --exclude='.sync-backup/' \
 		  --backup --backup-dir="$2/.sync-backup" --suffix=~$(date +%F-%T | sed 's/:/-/g') \
 		"$1/" "$2/" 2>&1
 }
