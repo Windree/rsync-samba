@@ -25,3 +25,14 @@
 username=Administator
 password=dZ041936814Ga
 ```
+
+## Examples
+
+```
+./app.sh -sc "/root/cifs.my-computer.conf" -e "\$RECYCLE.BIN/:System Volume Information/" //192.168.1.2/D "/backups/my-computer-d"
+```
+
+```
+./app.sh -sc "/root/cifs.my-computer.conf" -tc "/root/cifs.backup-server-creds.conf" -e "\$RECYCLE.BIN/:System Volume Information/" //192.168.1.2/D "//192.168.1.252/backups/my-computer-d"
+```
+
