@@ -30,7 +30,7 @@ function mount_samba() {
 		echo "Credentials file not found: $1"
 		exit 1
 	fi
-	if ! mount -t cifs -o credentials="$1",ro,noexec,cache=strict,uid=0,noforceuid,gid=0,noforcegid,iocharset=utf8,nocase,echo_interval=5 "$2" "$3"; then
+	if ! mount -t cifs -o credentials="$1",noexec,cache=strict,uid=0,noforceuid,gid=0,noforcegid,iocharset=utf8,nocase,echo_interval=5 "$2" "$3"; then
 		echo "Can't mount smb: $2"
 		exit 2
 	fi
