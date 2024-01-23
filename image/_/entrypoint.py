@@ -1,82 +1,36 @@
 #!/usr/bin/python3
 
-import os
-import subprocess
 import argparse
-from urllib.parse import urlparse, parse_qs
-
-
-class Path:
-    def __init__(self, arg):
-        url = urlparse(arg)
-        qs = parse_qs(url.query)
-        self.scheme = url.scheme if url.scheme else None
-        self.host = url.hostname
-        self.port = url.port
-        self.path = url.path if url.path else None
-        self.user = url.username
-        self.password = url.password
-        self.credentials = qs["credentials"][0] if "credentials" in qs else None
-
-    def validate(self) -> list[str]:
-        warnings = []
-        if self.scheme not in (None, "smb", "ssh"):
-            warnings.append("Only smb and ssh scheme supported")
-        if self.scheme == None:
-            if not self.path:
-                warnings.append("Path required if no schema exists")
-            else:
-                result = subprocess.run(
-                    ["df", self.path],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
-                if result.returncode != 0:
-                    warnings.append("Path '%s' not binded" % (self.path))
-        return warnings
-
-
-class Arguments:
-    def __init__(self):
-        parser = argparse.ArgumentParser(
-            prog="", description="Sync folders/files with rsync", usage="Examples:"
-        )
-        parser.add_argument("source", nargs=1)
-        parser.add_argument("destination", nargs=1)
-        args = parser.parse_args()
-        self.source = Path(args.source[0])
-        self.destination = Path(args.destination[0])
-
-    def validate(self):
-        sourceWarnings = self.source.validate()
-        destinationWarnings = self.destination.validate()
-        if len(sourceWarnings):
-            showWarnings("Source", sourceWarnings)
-        if len(destinationWarnings):
-            showWarnings("Destination", destinationWarnings)
-        return not (len(sourceWarnings) or len(destinationWarnings))
-
+from CreatePaths import CreatePaths
+from Protocol import Protocol
+from Path import Path
 
 def main():
-    arguments = Arguments()
+    parser = argparse.ArgumentParser(
+            prog="", description="Sync folders/files with rsync", usage="Examples:"
+        )
+    parser.add_argument("source", nargs=1)
+    parser.add_argument("destination", nargs=1)
+    args = parser.parse_args()
+    
+    arguments = CreatePaths(args.source, args.destination)
     if not arguments.validate():
         exit(1)
-
     print(vars(arguments.source), vars(arguments.destination))
 
-
-def showWarnings(header: str, warnings: list[str]):
-    print("%s:" % (header))
-    for warning in warnings:
-        print("\t%s" % (warning))
-
-
-def getRsyncPath(path: Path):
+def getRsyncArguments(path: Path, forceMount):
+    arguments = []
     match path.scheme:
-        case None:
-            return path.path
-        case "ssh":
-            return 
+        case Protocol.ssh:
+            arguments.append("-e")
+            if path.port != None:
+                arguments.append("ssh -p %s" % path.port)
+            arguments.append("%s:%s" % (path.host, path.path))
+        case Protocol.smb:
+            print("mount smb")
+        case _:
+            arguments.append(path.path)
+    return arguments
 
 
 main()
