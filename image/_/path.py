@@ -1,5 +1,5 @@
 from urllib.parse import urlparse, parse_qs
-import Protocol
+from protocol import Protocol
 
 class Path:
     def __init__(self, arg):

@@ -1,8 +1,8 @@
-from urllib.parse import urlparse, parse_qs
-import Path
+from path import Path
 
-class CreatePaths:
-    def __init__(self, source:str, destination: str):
+
+class Paths:
+    def __init__(self, source: str, destination: str):
         source = Path(source)
         destination = Path(destination)
 

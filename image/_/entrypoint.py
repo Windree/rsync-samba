@@ -1,22 +1,28 @@
 #!/usr/bin/python3
 
 import argparse
-from CreatePaths import CreatePaths
-from Protocol import Protocol
-from Path import Path
+from paths import Paths
+from protocol import Protocol
+from path import Path
+
 
 def main():
     parser = argparse.ArgumentParser(
-            prog="", description="Sync folders/files with rsync", usage="Examples:"
-        )
+        prog="",
+        description="Sync folders/files with rsync",
+        usage="Examples:",
+        allow_abbrev=False,
+    )
     parser.add_argument("source", nargs=1)
     parser.add_argument("destination", nargs=1)
+    parser.add_argument("rsync_arguments", nargs=argparse.REMAINDER)
     args = parser.parse_args()
-    
-    arguments = CreatePaths(args.source, args.destination)
+
+    arguments = Paths(args.source, args.destination)
     if not arguments.validate():
         exit(1)
     print(vars(arguments.source), vars(arguments.destination))
+
 
 def getRsyncArguments(path: Path, forceMount):
     arguments = []
